@@ -1,0 +1,64 @@
+#include <iostream>
+#include <climits>
+using namespace std;
+
+// Structure to hold both minimum and maximum elements
+struct MinMax {
+    int min;
+    int max;
+};
+
+// Function to find minimum and maximum elements in an array
+MinMax findMinMax(int arr[], int low, int high) {
+    MinMax mm, mmLeft, mmRight;
+    int mid;
+
+    // Base case: If there is only one element in the array
+    if (low == high) {
+        mm.min = arr[low];
+        mm.max = arr[low];
+        return mm;
+    }
+
+    // If there are two elements in the array
+    if (high == low + 1) {
+        if (arr[low] > arr[high]) {
+            mm.min = arr[high];
+            mm.max = arr[low];
+        } else {
+            mm.min = arr[low];
+            mm.max = arr[high];
+        }
+        return mm;
+    }
+
+    // If there are more than 2 elements, divide the array
+    mid = (low + high) / 2;
+    mmLeft = findMinMax(arr, low, mid);
+    mmRight = findMinMax(arr, mid + 1, high);
+
+    // Merge results
+    mm.min = min(mmLeft.min, mmRight.min);
+    mm.max = max(mmLeft.max, mmRight.max);
+
+    return mm;
+}
+
+int main() {
+    int n;
+    cout << "Enter the size of the array: ";
+    cin >> n;
+
+    int arr[n];
+    cout << "Enter " << n << " elements:\n";
+    for (int i = 0; i < n; ++i) {
+        cin >> arr[i];
+    }
+
+    MinMax result = findMinMax(arr, 0, n - 1);
+
+    cout << "Minimum element: " << result.min << endl;
+    cout << "Maximum element: " << result.max << endl;
+
+    return 0;
+}

@@ -1,0 +1,80 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <iomanip>
+
+using namespace std;
+
+struct Item
+{
+    int value;
+    int weight;
+};
+
+class Solution
+{
+public:
+    // Static comparison function to sort items based on their value-to-weight ratios
+    static bool comp(Item a, Item b)
+    {
+        double r1 = (double)a.value / (double)a.weight; // Calculate ratio for item a
+        double r2 = (double)b.value / (double)b.weight; // Calculate ratio for item b
+        return r1 > r2;                                 // Return true if ratio of item a is greater than ratio of item b
+    }
+
+    double fractionalKnapsack(int W, vector<Item> &arr)
+    {
+        sort(arr.begin(), arr.end(), comp); // Sort items based on their value-to-weight ratios
+
+        int curWeight = 0;       // Current weight in the knapsack
+        double finalvalue = 0.0; // Final value of items in the knapsack
+
+        // Iterate through sorted items
+        for (int i = 0; i < arr.size(); i++)
+        {
+            // If adding the current item does not exceed the knapsack weight limit
+            if (curWeight + arr[i].weight <= W)
+            {
+                curWeight += arr[i].weight; // Add the weight of the current item to the knapsack
+                finalvalue += arr[i].value; // Add the value of the current item to the final value
+            }
+            else
+            {                               // If adding the current item exceeds the knapsack weight limit
+                int remain = W - curWeight; // Calculate remaining weight that can be added
+                // Add fractional part of the current item to maximize value
+                finalvalue += (arr[i].value / (double)arr[i].weight) * (double)remain;
+                break; // Stop the loop since the knapsack is full
+            }
+        }
+        return finalvalue; // Return the maximum value that can be achieved
+    }
+};
+
+// Main function
+int main()
+{
+    int n, weight;
+    cout << "Enter the number of items: ";
+    cin >> n;
+
+    cout << "Enter the weight of the bag: ";
+    cin >> weight;
+
+    vector<Item> items(n); // Vector to store items
+
+    cout << "Enter the values and weights of each item:\n";
+    for (int i = 0; i < n; i++)
+    {
+        cout << "Item " << i + 1 << " value: ";
+        cin >> items[i].value;
+        cout << "Item " << i + 1 << " weight: ";
+        cin >> items[i].weight;
+    }
+
+    Solution obj;                                       // Create an instance of the Solution class
+    double ans = obj.fractionalKnapsack(weight, items); // Solve the fractional knapsack problem
+    // Print the maximum value with precision of 2 decimal places
+    cout << "The maximum value is " << setprecision(2) << fixed << ans;
+
+    return 0; // Return 0 to indicate successful completion
+}

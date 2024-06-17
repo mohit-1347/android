@@ -1,0 +1,70 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main()
+{
+    int n, amt;
+    cout << "Enter amount: ";
+    cin >> amt;
+    cout << "\nEnter number of denominations: ";
+    cin >> n;
+
+    // Declare a 2D array to store dynamic programming table
+    int a[n + 1][amt + 1];
+    // Declare an array to store denominations
+    int c[n];
+
+    cout << "\nEnter denominations: " << endl;
+    c[0] = 0;
+    for (int i = 1; i <= n; i++)
+    {
+        cin >> c[i];
+    }
+
+    // Fill the dynamic programming table
+    for (int i = 0; i <= n; i++)
+    {
+        for (int j = 0; j <= amt; j++)
+        {
+            // If no denomination or amount is 0, set current value as 0
+            if (i == 0 || j == 0)
+            {
+                a[i][j] = 0;
+            }
+            // Calculate minimum number of coins required
+            else
+            {
+                // If current denomination is 1, set current value as amount
+                if (c[i] == 1)
+                {
+                    a[i][j] = j;
+                }
+                // If current denomination is greater than current amount, take previous value
+                else if (c[i] > j)
+                {
+                    a[i][j] = a[i - 1][j];
+                }
+                // Otherwise, choose minimum between previous value and 1 + value obtained by excluding current denomination
+                else
+                {
+                    a[i][j] = min((a[i - 1][j]), (1 + a[i][j - c[i]]));
+                }
+            }
+        }
+    }
+
+    // Print the dynamic programming table
+    cout << "DP Table:" << endl;
+    for (int i = 0; i <= n; i++)
+    {
+        for (int j = 0; j <= amt; j++)
+        {
+            cout << a[i][j] << " ";
+        }
+        cout << endl;
+    }
+
+    // Print the minimum number of coins required
+    cout << "Number of coins required: " << a[n][amt];
+    return 0;
+}

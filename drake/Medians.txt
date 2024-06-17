@@ -1,0 +1,114 @@
+#include <iostream>
+#include <chrono>
+#include<bits/stdc++.h>
+using namespace std;
+using namespace std::chrono;
+
+int findMedian(vector<int> &arr, int low, int high) 
+{
+    int n = high-low+1;
+    vector<int> medians((n + 4)/5);
+
+    int i;
+    for(i=0; i<n/5; i++) 
+    {
+        sort(arr.begin()+low+i*5, arr.begin()+low+i*5+5);
+        medians[i] = arr[low+i*5+2];
+    }
+
+    if(i*5 < n) 
+    {
+        sort(arr.begin()+low+i*5, arr.begin()+low+i*5+n%5);
+        medians[i] = arr[low+i*5+(n%5)/2];
+        i++;
+    }
+
+    if(i == 1) 
+        return medians[0];
+    
+    return findMedian(medians, 0, i-1);
+}
+
+int partition(vector<int> &arr, int low, int high) 
+{
+    int pivot = findMedian(arr, low, high);
+    int left = low;
+    int right = high - 1;
+
+    while (true) 
+    {
+        while (left <= right && arr[left] < pivot) 
+            left++;
+
+        while (left <= right && arr[right] > pivot) 
+            right--;
+
+        if (left <= right) 
+        {
+            swap(arr[left], arr[right]);
+            left++;
+            right--;
+        }
+
+        else 
+            break;
+    }
+
+    swap(arr[left], arr[high]);
+    return left;
+
+    // Returns the final position of the pivot element after the partitioning process
+}
+
+void quickSort(vector<int> &arr, int low, int high) 
+{
+    if(low < high) 
+    {
+        int p = partition(arr, low, high);
+
+        quickSort(arr, low, p - 1);
+        quickSort(arr, p + 1, high);
+    }
+}
+
+int main() 
+{
+    srand(time(0));
+
+    int size = 0;
+
+    cout<<"\nEnter the size of array = ";
+    cin>>size;
+
+    vector<int> arr(size);
+
+    for(int i=0; i<size; i++) 
+    {
+        int random = rand() % 1000;
+        arr[i] = random;
+    }
+
+    cout<<"\nArray before sorting = "<<endl;
+    for(int i=0; i<size; i++) 
+    {
+        cout<<arr[i]<<" ";
+    }
+
+    auto start = high_resolution_clock::now();
+
+    quickSort(arr, 0, size - 1);
+
+    auto stop = high_resolution_clock::now();
+
+    // Convert to milliseconds
+    auto duration_time = duration_cast<duration<double>>(stop - start) * 1000; 
+    cout<<fixed<<setprecision(10)<<"\nTime taken by the quick sort using median of median method is = " <<duration_time.count()<<" milliseconds";
+    
+    cout<<"\nSorted array = \n";
+    for(int i=0; i<size; i++)
+    {
+        cout<<arr[i]<<" ";
+    }
+
+    return 0;
+}

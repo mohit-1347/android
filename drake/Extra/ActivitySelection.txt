@@ -1,0 +1,79 @@
+#include<iostream>
+#include<vector>
+#include<map>
+#include<algorithm>
+#include<functional> // Added for std::less
+
+using namespace std;
+
+// Templated function to sort pairs by second value
+template<typename T1, typename T2, typename Compare>
+struct something_magic {
+    bool operator()(const pair<T1, T2>& a, const pair<T1, T2>& b) const {
+        return Compare()(a.second, b.second);
+    }
+};
+
+class Activityselection {
+public:
+    int n;
+    vector<pair<int,int> > A;
+
+    Activityselection() {
+        n = 0;
+    }
+
+    // Function for input
+    void input() {
+        cout << "_________________ Input Function_____________" << endl; // Added missing endl
+        cout << "Enter the number of elements:\t";
+        cin >> n;
+
+        for(int i = 0; i < n; i++) {
+            int temp1, temp2;
+            cin >> temp1 >> temp2;
+            A.push_back({temp1, temp2});
+        }
+    }
+
+    // Function for sorting the array by second value
+    void sortarray() {
+        sort(A.begin(), A.end(), something_magic<int, int, less<int> >());
+    }
+
+    // Function for activity selection
+    void selection() {
+        int flag = 1;
+        vector<int> result(n, 0);
+        int toAdd = 0;
+        int count = 1;
+
+        cout << "Activity " << count << ": " << A[0].first << "," << A[0].second << endl;
+
+        count++;
+
+        while (flag != 0) {
+            toAdd = 0;
+            flag = 0;
+
+            for(int i = 1; i < n; i++) {
+                if(result[i] == 0 && A[toAdd].second < A[i].first) {
+                    result[i] = count;
+                    cout << "Activity " << count << ": " << A[i].first << "," << A[i].second << endl; // Added activity count and endl
+                    toAdd = i;
+                    flag = 1;
+                    count++;
+                }
+            }
+        }
+    }
+};
+
+int main() {
+    Activityselection obj;
+    obj.input();
+    obj.sortarray();
+    obj.selection();
+
+    return 0;
+}

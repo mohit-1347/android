@@ -1,0 +1,147 @@
+#include <iostream>
+#include <cstdlib>
+#include <ctime>
+#include <chrono>
+#include <algorithm>
+
+using namespace std;
+using namespace std::chrono;
+
+// Function to fill the array with random values and print the first 10 elements
+void inputArray(int arr[], int size) {
+    for (int i = 0; i < size; i++) {
+        arr[i] = rand() % 1000;
+    }
+    cout << "The unsorted array is: ";
+    for (int i = 0; i < min(size, 10); i++) {
+        cout << arr[i] << " ";
+    }
+    cout << endl;
+}
+
+// Function to print an array
+void printArray(int arr[], int size, const string& message) {
+    cout << message;
+    for (int i = 0; i < min(size, 10); i++) {
+        cout << arr[i] << " ";
+    }
+    cout << endl;
+}
+
+// Swap function for two integer elements
+void swap(int& a, int& b) {
+    int temp = a;
+    a = b;
+    b = temp;
+}
+
+// Partition function for standard QuickSort
+int partition(int arr[], int low, int high) {
+    int pivot = arr[high];
+    int i = low - 1;
+    for (int j = low; j < high; j++) {
+        if (arr[j] <= pivot) {
+            i++;
+            swap(arr[i], arr[j]);
+        }
+    }
+    swap(arr[i + 1], arr[high]);
+    return i + 1;
+}
+
+// QuickSort function
+void quicksort(int arr[], int low, int high) {
+    if (low < high) {
+        int p = partition(arr, low, high);
+        quicksort(arr, low, p - 1);
+        quicksort(arr, p + 1, high);
+    }
+}
+
+// Median of Medians function
+int findMedian(int arr[], int n) {
+    sort(arr, arr + n);
+    return arr[n / 2];
+}
+
+// Partition function using Median of Medians
+int partitionMedian(int arr[], int low, int high, int median) {
+    // Move median element to end
+    for (int i = low; i <= high; i++) {
+        if (arr[i] == median) {
+            swap(arr[i], arr[high]);
+            break;
+        }
+    }
+    // Use standard partition function
+    return partition(arr, low, high);
+}
+
+// QuickSort function using Median of Medians
+void quicksortMedian(int arr[], int low, int high) {
+    if (low < high) {
+        // Calculate the size of the current range
+        int n = high - low + 1;
+
+        // Divide the array into groups of 5 elements and calculate the median of each group
+        int numMedians = (n + 4) / 5;
+        int medians[numMedians];
+        for (int i = 0; i < numMedians; i++) {
+            int subSize = (i == numMedians - 1) ? n - i * 5 : 5;
+            int median = findMedian(&arr[low + i * 5], subSize);
+            medians[i] = median;
+        }
+
+        // Find the median of the medians
+        int medOfMedians = findMedian(medians, numMedians);
+
+        // Partition the array using the median of medians
+        int pivotIndex = partitionMedian(arr, low, high, medOfMedians);
+
+        // Recursively sort the subarrays
+        quicksortMedian(arr, low, pivotIndex - 1);
+        quicksortMedian(arr, pivotIndex + 1, high);
+    }
+}
+
+int main() {
+    srand(time(0));
+    int size;
+
+    cout << "Enter the size of the array: ";
+    cin >> size;
+
+    // Allocate arrays for quicksort and quicksort using median of medians
+    int* arr1 = new int[size];
+    int* arr2 = new int[size];
+
+    // Fill the arrays with random numbers and display the unsorted array
+    inputArray(arr1, size);
+    copy(arr1, arr1 + size, arr2);
+
+    // Measure time taken by standard quicksort
+    auto start1 = high_resolution_clock::now();
+    quicksort(arr1, 0, size - 1);
+    auto stop1 = high_resolution_clock::now();
+    auto duration1 = duration_cast<nanoseconds>(stop1 - start1);
+    cout << "\nTime taken by normal quicksort: " << duration1.count() << " nanoseconds\n";
+
+    // Print sorted array from standard QuickSort
+    printArray(arr1, size, "Sorted array (normal quicksort): ");
+
+    // Measure time taken by quicksort using median of medians
+    auto start2 = high_resolution_clock::now();
+    quicksortMedian(arr2, 0, size - 1);
+    auto stop2 = high_resolution_clock::now();
+    auto duration2 = duration_cast<nanoseconds>(stop2 - start2);
+    cout << "\nTime taken by quicksort using Median of medians: " << duration2.count() << " nanoseconds\n";
+
+    // Print sorted array from QuickSort using Median of Medians
+    printArray(arr2, size, "Sorted array (quicksort using Median of medians): ");
+
+    // Free allocated memory
+    delete[] arr1;
+    delete[] arr2;
+
+    return 0;
+}

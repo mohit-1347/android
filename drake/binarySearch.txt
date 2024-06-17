@@ -1,0 +1,161 @@
+#include <iostream>
+
+// Function to perform bubble sort
+void bubbleSort(int arr[], int n)
+{
+    bool isUnsorted;
+    // Repeat until the array is sorted
+    do
+    {
+        isUnsorted = false;
+        // Traverse through the array
+        for (int i = 0; i < (n - 1); i++)
+        {
+            // If adjacent elements are not in order, swap them
+            if (arr[i] > arr[i + 1])
+            {
+                isUnsorted = true;
+                for (; i < (n - 1); i++)
+                {
+                    if (arr[i] > arr[i + 1])
+                    {
+                        std::swap(arr[i], arr[i + 1]);
+                    }
+                }
+            }
+        }
+    } while (isUnsorted);
+}
+
+// Function to perform linear search
+void linear_search(int arr[], int size, int num)
+{
+    int flag = 0, i;
+    // Iterate through the array
+    for (i = 0; i < size; i++)
+    {
+        // If element found, set flag and break
+        if (arr[i] == num)
+        {
+            flag = 1;
+            break;
+        }
+    }
+    // Print result based on flag
+    if (flag == 0)
+        std::cout << "\nElement is not found in the array ";
+    else
+        std::cout << "\nElement is found at position " << (i + 1);
+}
+
+// Function to perform binary search
+void binary_search(int arr[], int size, int num)
+{
+    int first = 0;
+    int last = size - 1;
+    int middle = (first + last) / 2;
+    // Repeat until the search space is valid
+    while (first <= last)
+    {
+        if (arr[middle] < num)
+            first = middle + 1;
+        else if (arr[middle] == num)
+        {
+            std::cout << "\nThe number, " << num << " found at Position " << middle + 1;
+            break;
+        }
+        else
+            last = middle - 1;
+        middle = (first + last) / 2;
+    }
+    // Print result based on search outcome
+    if (first > last)
+        std::cout << "\nThe number, " << num << " is not found in given Array";
+    std::cout << std::endl;
+}
+
+// Function for binary search using recursion
+int binarySearchRecursive(int arr[], int l, int r, int x)
+{
+    if (r >= l)
+    {
+        int mid = l + (r - l) / 2;
+        if (arr[mid] == x)
+            return mid;
+        if (arr[mid] > x)
+            return binarySearchRecursive(arr, l, mid - 1, x);
+        return binarySearchRecursive(arr, mid + 1, r, x);
+    }
+    return -1;
+}
+
+// Main function
+int main()
+{
+    int size;
+    std::cout << "Enter the size of the array: ";
+    std::cin >> size;
+
+    int arr[size];
+    std::cout << "Enter the elements of the array:\n";
+    for (int i = 0; i < size; ++i)
+    {
+        std::cin >> arr[i];
+    }
+
+    // Sort the array using bubble sort
+    bubbleSort(arr, size);
+
+    // Display the sorted array
+    std::cout << "Sorted array: ";
+    for (int i = 0; i < size; ++i)
+    {
+        std::cout << arr[i] << " ";
+    }
+    std::cout << std::endl;
+
+    int choice, num;
+    do
+    {
+        // Display menu for operations
+        std::cout << "\nChoose an operation:\n";
+        std::cout << "1. Linear Search\n";
+        std::cout << "2. Binary Search\n";
+        std::cout << "3. Binary Search (Recursive)\n";
+        std::cout << "4. Exit\n";
+        std::cout << "Enter your choice: ";
+        std::cin >> choice;
+
+        switch (choice)
+        {
+        case 1:
+            std::cout << "Enter the number to search: ";
+            std::cin >> num;
+            linear_search(arr, size, num);
+            break;
+        case 2:
+            std::cout << "Enter the number to search: ";
+            std::cin >> num;
+            binary_search(arr, size, num);
+            break;
+        case 3:
+            std::cout << "Enter the number to search: ";
+            std::cin >> num;
+            {
+                int result = binarySearchRecursive(arr, 0, size - 1, num);
+                if (result != -1)
+                    std::cout << "\nThe number, " << num << " found at Position " << result + 1;
+                else
+                    std::cout << "\nThe number, " << num << " is not found in the given Array";
+            }
+            break;
+        case 4:
+            std::cout << "Exiting...\n";
+            break;
+        default:
+            std::cout << "Invalid choice. Please try again.\n";
+        }
+    } while (choice != 4);
+
+    return 0;
+}

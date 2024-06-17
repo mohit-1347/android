@@ -1,0 +1,68 @@
+// DAA Binary Search Recursion Randomized
+
+#include <bits/stdc++.h>
+using namespace std;
+using namespace std::chrono;
+
+// Function to perform binary search recursively
+void BinarySearch(vector<int> &v, int s, int e, int key)
+{
+    if (s <= e)
+    {
+        // Randomly select a pivot within the range [s, e]
+        int m = s + rand() % (e - s + 1);
+
+        // If the key is found at the middle element
+        if (v[m] == key)
+        {
+            cout << "Element found at index: " << m << endl;
+        }
+        // If the key is smaller, recursively search in the left half
+        else if (v[m] > key)
+        {
+            BinarySearch(v, s, m - 1, key);
+        }
+        // If the key is larger, recursively search in the right half
+        else
+        {
+            BinarySearch(v, m + 1, e, key);
+        }
+    }
+    else
+    {
+        cout << "Element not found." << endl;
+    }
+}
+
+int main()
+{
+    int n, key;
+    cout << "Enter the size :" << endl;
+    cin >> n;
+    vector<int> v;
+
+    // Generate a vector of random integers and sort it
+    for (int i = 0; i < n; i++)
+    {
+        v.push_back(rand() % 10000);
+    }
+    sort(v.begin(), v.end());
+
+    // Display the sorted vector
+    for (int i = 0; i < n; i++)
+    {
+        cout << v[i] << " ";
+    }
+    cout << endl;
+
+    cout << "Enter element to search: " << endl;
+    cin >> key;
+
+    auto st = high_resolution_clock::now();
+    BinarySearch(v, 0, n - 1, key); // Perform binary search
+    auto ed = high_resolution_clock::now();
+    auto duration = duration_cast<microseconds>(ed - st);
+
+    cout << "Time required: " << duration.count() << endl;
+    return 0;
+}

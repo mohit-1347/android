@@ -1,0 +1,89 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+
+// Function to merge two sorted halves of the array
+void merge(vector<int> &arr, int low, int mid, int high)
+{
+    vector<int> temp;    // temporary array to store sorted elements
+    int left = low;      // starting index of left half of arr
+    int right = mid + 1; // starting index of right half of arr
+
+    // Loop to merge elements from left and right halves into temp array
+    while (left <= mid && right <= high)
+    {
+        if (arr[left] <= arr[right])
+        {                              // If element on left is smaller or equal
+            temp.push_back(arr[left]); // Push left element to temp array
+            left++;                    // Move to next element in left half
+        }
+        else
+        {                               // If element on right is smaller
+            temp.push_back(arr[right]); // Push right element to temp array
+            right++;                    // Move to next element in right half
+        }
+    }
+
+    // If there are still elements remaining in the left half
+    while (left <= mid)
+    {
+        temp.push_back(arr[left]); // Push remaining left elements to temp array
+        left++;                    // Move to next element in left half
+    }
+
+    // If there are still elements remaining in the right half
+    while (right <= high)
+    {
+        temp.push_back(arr[right]); // Push remaining right elements to temp array
+        right++;                    // Move to next element in right half
+    }
+
+    // Copy sorted elements from temp back to original array 'arr'
+    for (int i = low; i <= high; i++)
+    {
+        arr[i] = temp[i - low]; // Update original array with sorted elements
+    }
+}
+
+// Recursive function to perform merge sort
+void mergeSort(vector<int> &arr, int low, int high)
+{
+    if (low >= high)
+        return;                    // Base case: if array size is 1 or 0, it is already sorted
+    int mid = (low + high) / 2;    // Calculate midpoint of the array
+    mergeSort(arr, low, mid);      // Recursively sort left half
+    mergeSort(arr, mid + 1, high); // Recursively sort right half
+    merge(arr, low, mid, high);    // Merge the two sorted halves
+}
+
+// Main function
+int main()
+{
+    int n;
+    cout << "Enter the number of elements in the array: ";
+    cin >> n;
+    vector<int> arr(n); // Declare a vector to store the array elements
+
+    cout << "Enter " << n << " elements: ";
+    for (int i = 0; i < n; i++)
+    {
+        cin >> arr[i]; // Input array elements
+    }
+
+    cout << "Before Sorting Array: " << endl;
+    for (int i = 0; i < n; i++)
+    {
+        cout << arr[i] << " "; // Display array before sorting
+    }
+    cout << endl;
+
+    mergeSort(arr, 0, n - 1); // Call merge sort function
+
+    cout << "After Sorting Array: " << endl;
+    for (int i = 0; i < n; i++)
+    {
+        cout << arr[i] << " "; // Display array after sorting
+    }
+    cout << endl;
+    return 0;
+}

@@ -1,0 +1,54 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main()
+{
+    // Vector to store denominations
+    vector<int> denominations;
+    int amount, numDenominations, count = 0;
+
+    // Taking input for the number of denominations
+    cout << "Enter number of denominations: ";
+    cin >> numDenominations;
+
+    // Taking input for each denomination and storing them in the vector
+    cout << "Enter Denominations: " << endl;
+    for (int i = 0; i < numDenominations; i++)
+    {
+        int denomination;
+        cin >> denomination;
+        denominations.push_back(denomination);
+    }
+
+    // Taking input for the amount for which change needs to be made
+    cout << "\nEnter amount: ";
+    cin >> amount;
+
+    // Sorting the denominations in ascending order
+    sort(denominations.begin(), denominations.end());
+    // Reversing the sorted denominations to have them in descending order
+    reverse(denominations.begin(), denominations.end());
+
+    int i = 0;
+    // Loop to find the required number of coins for the given amount
+    do
+    {
+        if (amount >= denominations[i])
+        {
+            // Calculating the number of coins of each denomination required
+            count = count + amount / denominations[i];
+            // Updating the remaining amount after using the current denomination
+            amount = amount % denominations[i];
+            i++;
+        }
+        else
+        {
+            i++;
+        }
+    } while (amount != 0); // Continue until the amount becomes zero
+
+    // Outputting the required number of coins
+    cout << "Required number of coins: " << count;
+
+    return 0;
+}

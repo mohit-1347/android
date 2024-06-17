@@ -1,0 +1,54 @@
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+// Function to perform Knuth-Morris-Pratt (KMP) algorithm
+int kmp(string String, string pattern)
+{
+    int i = 0, j = 0, m = pattern.length(), n = String.length();
+    pattern = ' ' + pattern;       // Shift the pattern indices by 1
+    vector<int> piTable(m + 1, 0); // Create a vector for the prefix function table
+    for (int i = 2; i <= m; i++)
+    {
+        while (j <= m && pattern[j + 1] == pattern[i]) // Compute the prefix function values
+            piTable[i++] = ++j;                        // Increment both indices
+        j = 0;                                         // Reset j
+    }
+    j = 0; // Reset j
+    // Traverse the string to find the pattern
+    for (int i = 0; i < n; i++)
+    {
+        if (pattern[j + 1] != String[i])
+        {
+            while (j != 0 && pattern[j + 1] != String[i]) // Compute the new j value
+                j = piTable[j];                           // Update j using the prefix function table
+        }
+        j++; // Increment j
+        if (j == m)
+            return i - m + 1; // If pattern found, return the index
+    }
+    return -1; // Pattern not found
+}
+
+// Main function
+int main()
+{
+    string pattern, String;
+
+    // Input the pattern and the string from the user
+    cout << "Enter the pattern: ";
+    getline(cin, pattern);
+    cout << "Enter the string: ";
+    getline(cin, String);
+
+    // Perform pattern matching
+    int index = kmp(String, pattern);
+    // Output the result
+    if (index == -1)
+        cout << "The pattern is not found";
+    else
+        cout << "The pattern \"" << pattern << "\" is found in the given string \""
+             << String << "\" at index " << index;
+    return 0;
+}

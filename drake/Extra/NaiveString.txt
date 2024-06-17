@@ -1,0 +1,42 @@
+#include <iostream>
+#include <cstring>
+
+using namespace std;
+
+// Function to search for a pattern in a text
+void search(char text[], char pat[])
+{
+    int N = strlen(text); // Length of the text
+    int M = strlen(pat);  // Length of the pattern
+
+    // Check for each possible starting position of the pattern in the text
+    for (int i = 0; i <= N - M; i++)
+    {
+        int j;
+
+        // Compare each character of the pattern with the corresponding character in the text
+        for (j = 0; j < M; j++)
+            if (text[i + j] != pat[j]) // If characters don't match, break the loop
+                break;
+
+        if (j == M) // If all characters of the pattern match, print the index where it starts in the text
+            cout << "Pattern found at index " << i << endl;
+    }
+}
+
+// Main function
+int main()
+{
+    char text[100]; // Array to store the text
+    char pat[100];  // Array to store the pattern to search for
+
+    cout << "Enter the text: ";
+    cin.getline(text, 100); // Input the text
+
+    cout << "Enter the pattern to search for: ";
+    cin.getline(pat, 100); // Input the pattern
+
+    search(text, pat); // Call the search function
+
+    return 0;
+}

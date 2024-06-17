@@ -1,0 +1,62 @@
+#include <iostream>
+using namespace std;
+
+// Function to return the maximum of two integers
+int max(int x, int y)
+{
+    return (x > y) ? x : y;
+}
+
+// Function to solve the knapsack problem
+int knapSack(int W, int w[], int v[], int n)
+{
+    // K[i][wt] stores the maximum value that can be obtained with weight less than or equal to wt using items up to i
+    int K[n + 1][W + 1];
+
+    // Build table K[][] in bottom-up manner
+    for (int i = 0; i <= n; i++)
+    {
+        for (int wt = 0; wt <= W; wt++)
+        {
+            // Initialize the first row and column with zeros
+            if (i == 0 || wt == 0)
+                K[i][wt] = 0;
+            // If the weight of the current item is less than or equal to wt, include it
+            else if (w[i - 1] <= wt)
+                K[i][wt] = max(v[i - 1] + K[i - 1][wt - w[i - 1]], K[i - 1][wt]);
+            // Otherwise, exclude the current item
+            else
+                K[i][wt] = K[i - 1][wt];
+        }
+    }
+    // Return the maximum value that can be obtained
+    return K[n][W];
+}
+
+int main()
+{
+    // Prompt the user to enter the number of items in the knapsack
+    cout << "Enter the number of items in the Knapsack:";
+    int n, W;
+    cin >> n;
+
+    // Arrays to store values and weights of items
+    int v[n], w[n];
+
+    // Input values and weights for each item
+    for (int i = 0; i < n; i++)
+    {
+        cout << "Enter value and weight for item " << i << ":";
+        cin >> v[i];
+        cin >> w[i];
+    }
+
+    // Prompt the user to enter the capacity of the knapsack
+    cout << "Enter the capacity of the knapsack: ";
+    cin >> W;
+
+    // Print the maximum value that can be obtained
+    cout << "Maximum value: " << knapSack(W, w, v, n);
+
+    return 0;
+}

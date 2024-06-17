@@ -1,0 +1,45 @@
+#include <iostream>
+#include <vector>
+#include <climits>
+using namespace std;
+
+const int n = 4;
+
+int tsp(int mask, int pos, vector<vector<int>>& dp, const vector<vector<int>>& dist)
+{
+    const int visited_all = (1 << n) - 1;
+
+    if (mask == visited_all)
+    {
+        return dist[pos][0]; // Return to the starting city
+    }
+
+    if (dp[mask][pos] != -1)
+    {
+        return dp[mask][pos];
+    }
+
+    int ans = INT_MAX; // Reset ans for each call
+    // Try to go to unvisited city
+    for (int city = 0; city < n; city++) {
+        if ((mask & (1 << city)) == 0) {
+            int newDistance = dist[pos][city] + tsp(mask | (1 << city), city, dp, dist);
+            ans = min(ans, newDistance);
+        }
+    }
+    return dp[mask][pos] = ans;
+}
+
+int main() {
+    vector<vector<int>> dp(1 << n, vector<int>(n, -1)); // Memoization table
+
+    vector<vector<int>> dist = {
+        {0, 20, 42, 25},
+        {20, 0, 30, 34},
+        {42, 30, 0, 10},
+        {25, 34, 10, 0},
+    };
+
+    cout << tsp(1, 0, dp, dist) << endl;
+    return 0;
+}

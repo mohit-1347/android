@@ -1,0 +1,87 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+
+#define count 0 // Using a macro to define a constant
+
+// Function to print the solution
+void printSolution(const vector<vector<int> > &board, int n)
+{
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < n; j++)
+            cout << board[i][j] << " ";
+        cout << endl;
+    }
+}
+
+// Function to check if it's safe to place a queen at board[row][col]
+bool isSafe(const vector<vector<int> > &board, int row, int col, int n)
+{
+    int i, j;
+    // Check if there is a queen in the same row
+    for (i = 0; i < col; i++)
+        if (board[row][i])
+            return false;
+    // Check upper diagonal on left side
+    for (i = row, j = col; i >= 0 && j >= 0; i--, j--)
+        if (board[i][j])
+            return false;
+    // Check lower diagonal on left side
+    for (i = row, j = col; j >= 0 && i < n; i++, j--)
+        if (board[i][j])
+            return false;
+    return true; // If no conflicts, it's safe
+}
+
+// Function to solve the N Queens problem using backtracking
+void solveNQUtil(vector<vector<int> > &board, int col, int n)
+{
+    // If all queens are placed then print the solution
+    if (col >= n)
+    {
+        printSolution(board, n);
+        cout << endl;
+        return;
+    }
+    // Try placing this queen in all rows one by one
+    for (int i = 0; i < n; i++)
+    {
+        // Check if the queen can be placed on board[i][col]
+        if (isSafe(board, i, col, n))
+        {
+            // Place the queen
+            board[i][col] = 1;
+            // Recur to place rest of the queens
+            solveNQUtil(board, col + 1, n);
+            // If placing queen in board[i][col] doesn't lead to a solution then backtrack
+            board[i][col] = 0;
+        }
+    }
+}
+
+// Function to solve the N Queens problem
+void solveNQ(int n)
+{
+    // Initialize the board
+    vector<vector<int> > board(n, vector<int>(n, 0));
+    // Start from the leftmost column
+    solveNQUtil(board, 0, n);
+}
+
+int main()
+{
+    int n;
+    cout << "\nEnter no of queens : ";
+    cin >> n;
+    // If the number of queens is less than or equal to 3, there is no solution
+    if (n <= 3)
+    {
+        cout << "No solution";
+        return 0;
+    }
+    cout << "Solutions : " << endl;
+    // Solve the N Queens problem
+    solveNQ(n);
+    return 0;
+}

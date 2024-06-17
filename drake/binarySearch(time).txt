@@ -1,0 +1,127 @@
+#include <iostream>
+#include <cstdlib>
+#include <bits/stdc++.h>
+#include <chrono>
+
+using namespace std;
+
+void bubbleSort(int arr[], int n) {
+    bool isUnsorted;
+    do {
+        isUnsorted = false;
+        for (int i = 0; i < (n - 1); i++) {
+            if (arr[i] > arr[i + 1]) {
+                isUnsorted = true;
+                for (; i < (n - 1); i++) {  
+                    if (arr[i] > arr[i + 1]) {
+                        std::swap(arr[i], arr[i + 1]);
+                    }
+                }
+            }
+        }
+    } while (isUnsorted);
+}
+
+void linear_search(int arr[], int size, int num) {
+    int flag = 0, i;
+    for (i = 0; i < size; i++) {
+        if (arr[i] == num) {
+            flag = 1;
+            break;
+        }
+    }
+    if (flag == 0)
+        cout << "\nElement is not found in the array ";
+    else
+        cout << "\nElement is found at position " << (i + 1);
+}
+
+void binary_search(int arr[], int size, int num) {
+    int first = 0;
+    int last = size - 1;
+    int middle = (first + last) / 2;
+    while (first <= last) {
+        if (arr[middle] < num)
+            first = middle + 1;
+        else if (arr[middle] == num) {
+            cout << "\nThe number, " << num << " found at Position " << middle + 1;
+            break;
+        } else
+            last = middle - 1;
+        middle = (first + last) / 2;
+    }
+    if (first > last)
+        cout << "\nThe number, " << num << " is not found in given Array";
+    cout << endl;
+}
+
+int binarySearchRecursive(int arr[], int l, int r, int x) {
+    if (r >= l) {
+        int mid = l + (r - l) / 2;
+        if (arr[mid] == x)
+            return mid;
+        if (arr[mid] > x)
+            return binarySearchRecursive(arr, l, mid - 1, x);
+        return binarySearchRecursive(arr, mid + 1, r, x);
+    }
+    return -1;
+}
+
+int main() {
+    int arr[1000], i, size, num;
+    cout << "Enter the size of the array: ";
+    cin >> size;
+    cout << "\nThe " << size << " values in the array: \n";
+    srand((unsigned) time(NULL));
+    for (i = 0; i < size; i++) {
+        int random = rand();
+        arr[i] = random;
+        cout << random << " ";
+    }
+    cout << "\n\nEnter the value to be searched: ";
+    cin >> num;
+    cout << "\n======================================================\n";
+    // Linear search on unsorted array
+    chrono::steady_clock::time_point t1 = chrono::steady_clock::now();
+    linear_search(arr, size, num);
+    chrono::steady_clock::time_point t2 = chrono::steady_clock::now();
+    chrono::duration<double> time_span = chrono::duration_cast<chrono::duration<double>>(t2 - t1);
+    cout << "\nLinear Search on unsorted array took " << time_span.count() << " seconds.\n";
+    cout << "\n======================================================\n";
+    // Binary search on sorted array
+    chrono::steady_clock::time_point t3 = chrono::steady_clock::now();
+    // Sorting the array for binary search
+    // sort(arr, arr + size);
+    bubbleSort(arr, size);
+    chrono::steady_clock::time_point t4 = chrono::steady_clock::now();
+    // Calling the binary search function
+    binary_search(arr, size, num);
+    chrono::steady_clock::time_point t5 = chrono::steady_clock::now();
+    chrono::duration<double> Binary_unsort = chrono::duration_cast<chrono::duration<double>>(t5 - t4);
+    chrono::duration<double> sort_time = chrono::duration_cast<chrono::duration<double>>(t4 - t3);
+    cout << "\nBubble sort took " << sort_time.count() << " seconds.\n";
+    cout << "\nIterative Binary Search (without including the sorting time) took " << Binary_unsort.count() << " seconds.\n";
+    chrono::duration<double> Binary_sort = chrono::duration_cast<chrono::duration<double>>(t5 - t3);
+    cout << "\nIterative Binary Search (Including the sorting time) took " << Binary_sort.count() << " seconds.\n";
+    cout << "\n======================================================\n";
+    // Linear search on sorted array
+    chrono::steady_clock::time_point t6 = chrono::steady_clock::now();
+    linear_search(arr, size, num);
+    chrono::steady_clock::time_point t7 = chrono::steady_clock::now();
+    chrono::duration<double> linear_sort = chrono::duration_cast<chrono::duration<double>>(t7 - t6);
+    cout << "\nLinear Search on sorted array took " << linear_sort.count() << " seconds.\n\n";
+    cout << "\n======================================================\n";
+    // Recursive Binary search without including sorting time
+    chrono::steady_clock::time_point t8 = chrono::steady_clock::now();
+    int index = binarySearchRecursive(arr, 0, size - 1, num);
+    (index == -1)
+            ? cout << "Element is not present in array"
+            : cout << "Element is present at index " << index + 1;
+    chrono::steady_clock::time_point t9 = chrono::steady_clock::now();
+    chrono::duration<double> Binary_recur = chrono::duration_cast<chrono::duration<double>>(t7 - t6);
+    cout << "\nRecursive Binary Search on sorted array (without sorting time) took " << Binary_recur.count() << " seconds.\n";
+    // Recursive Binary search with including sorting time
+    cout << "\nRecursive Binary Search on sorted array (with sorting time) took "
+         << sort_time.count() + Binary_recur.count() << " seconds.\n";
+    return 0;
+}

@@ -1,0 +1,61 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+struct Interval {
+    int start;
+    int end;
+    int passengerNumber;
+};
+
+bool compareIntervals(const Interval& a, const Interval& b) {
+    return a.end < b.end;
+}
+
+int getMinCabs(vector<Interval>& intervals) {
+    sort(intervals.begin(), intervals.end(), compareIntervals);
+
+    int numCabs = 1;
+    vector<int> cabEndTimes;
+    cabEndTimes.push_back(intervals[0].end);
+
+    for (int i = 1; i < intervals.size(); ++i) {
+        bool assigned = false;
+        for (int j = 0; j < numCabs; ++j) {
+            if (cabEndTimes[j] <= intervals[i].start) {
+                cabEndTimes[j] = intervals[i].end;
+                assigned = true;
+                break;
+            }
+        }
+        if (!assigned) {
+            cabEndTimes.push_back(intervals[i].end);
+            numCabs++;
+        }
+    }
+
+    return numCabs;
+}
+
+int main() {
+    int numPassengers;
+    cout << "Enter the number of passengers: ";
+    cin >> numPassengers;
+
+    vector<Interval> intervals(numPassengers);
+    cout << "Enter the start and end times for each passenger:" << endl;
+    for (int i = 0; i < numPassengers; ++i) {
+        cout << "Passenger " << i+1 << " start time: ";
+        cin >> intervals[i].start;
+        cout << "Passenger " << i+1 << " end time: ";
+        cin >> intervals[i].end;
+        intervals[i].passengerNumber = i+1;
+    }
+
+    int minCabs = getMinCabs(intervals);
+
+    cout << "Minimum number of cabs required: " << minCabs << endl;
+
+    return 0;
+}

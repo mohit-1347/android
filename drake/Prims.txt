@@ -1,0 +1,60 @@
+#include <iostream>
+#include <cstring>
+#include <bits/stdc++.h>
+using namespace std;
+
+#define INF 123456
+
+void Prims()
+{
+    int n, edges = 0, finalcost = 0;
+    cout << "\nEnter the no of vertices: ";
+    cin >> n;
+    int costmap[n][n];
+    cout << "\nEnter the adjacency matrix: \n";
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < n; j++)
+        {
+            cin >> costmap[i][j];
+        }
+    }
+    int selected[n];                           // Array to keep track of selected vertices
+    memset(selected, false, sizeof(selected)); // Initialize all vertices as not selected
+    cout << "\nEdge\tWeight\n";
+    selected[0] = true;    // Select the first vertex
+    while (edges != n - 1) // Loop until all edges are selected
+    {
+        int min = INF;              // Initialize minimum cost as infinity
+        int x = 0, y = 0;           // Variables to store indices of minimum cost edge
+        for (int i = 0; i < n; i++) // Loop through all selected vertices
+        {
+            if (selected[i]) // If vertex is selected
+            {
+                for (int j = 0; j < n; j++) // Loop through all vertices
+                {
+                    if (!selected[j] && costmap[i][j]) // If vertex is not selected and there is an edge
+                    {
+                        if (min > costmap[i][j]) // If current edge cost is smaller than minimum
+                        {
+                            min = costmap[i][j]; // Update minimum cost
+                            x = i;               // Update indices of minimum cost edge
+                            y = j;
+                        }
+                    }
+                }
+            }
+        }
+        finalcost += costmap[x][y];                                  // Add minimum cost edge to final cost
+        cout << x << " --> " << y << " : " << costmap[x][y] << endl; // Output selected edge
+        selected[y] = true;                                          // Mark the selected vertex
+        edges++;                                                     // Increment edge count
+    }
+    cout << "\nFinal cost = " << finalcost << endl; // Output final cost of minimum spanning tree
+}
+
+int main()
+{
+    Prims();  // Call Prim's algorithm function
+    return 0; // Return 0 to indicate successful execution
+}
